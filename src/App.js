@@ -1,12 +1,14 @@
 import './App.css';  
 import { useState } from 'react';
+import axios from 'axios';
 import {NotificationContainer} from 'react-notifications';
 
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link
+  Link,
+  Redirect,
 } from "react-router-dom";
 
 import {
@@ -20,6 +22,12 @@ import {
 
 import LogIn from './views/LogIn';
 import Register from './views/Register';
+import DashBoard from './views/DashBoard';
+
+axios.defaults.baseURL = 'http://127.0.0.1:8000/api/';
+axios.defaults.headers.common['Authorization'] = 'bearer '+sessionStorage.getItem('user_token');
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
 
 
 function App() {
@@ -52,18 +60,31 @@ function App() {
                     Register
                   </Link>
                 </NavItem>
+                <NavItem>
+                  <Link to="/dashboard" className="nav-link" >
+                    DashBoard
+                  </Link>
+                </NavItem>
               </Nav>
             </Collapse>
           </Navbar>
 
 
             <Switch >
+              <Redirect exact from='/' to='/login'/>
               <Route path="/login">
                 <LogIn />
               </Route>
               <Route path="/register">
                 <Register />
               </Route>
+              <Route path="/dashboard" component={DashBoard} render={() => {
+                    return 1 === 2 ? <Redirect to='/login' />:'';
+                  }} >
+              </Route>
+              <Redirect to={{
+                  state: { error: true }
+              }} />
             </Switch>
           </div>
         </Router>

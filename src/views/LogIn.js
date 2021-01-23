@@ -1,12 +1,28 @@
 import axios from 'axios';
-import React, { Component } from 'react';
 import {NotificationManager} from 'react-notifications';
+import React, { Component } from 'react';
 
 
 class LogIn extends Component {
 
+
+    constructor(props){
+        super(props);
+        this.state = {
+            loadDisplay: false
+        };
+
+        this.onSubmit = this.onSubmit.bind(this);
+    }
+
+
     onSubmit(e){
         e.preventDefault();
+
+        this.setState({
+            loadDisplay: true
+        });
+        let me = this;
 
         let data = {
             clave: e.target.elements.password.value,
@@ -14,21 +30,30 @@ class LogIn extends Component {
         }
 
         if(data.clave !== '' && data.usuario !== ''){
-            axios.post('http://127.0.0.1:8000/api/auth/login', data)
+            axios.post('auth/login', data)
             .then(res => {
-                console.log('ok ok: ', res);
                 if(res.data.data){
+                    res.data.rol = res.roles;
                     NotificationManager.success(res.data.message);
-                    localStorage.setItem('user_token', );
+                    sessionStorage.setItem('user_token', res.data.access_token);
+                    sessionStorage.setItem('user_data', JSON.stringify(res.data));
                 }else{
                     NotificationManager.error(res.data.message);
                 }
-            })
-            .catch(err => {
+
+                me.setState({
+                    loadDisplay: false
+                });
+            }, error => {
                 NotificationManager.warning('Intente de nuevo');
-            });
+            })
+            // .catch(err => {
+            // });
         }else{
             NotificationManager.warning('Rellene los datos');
+            this.setState({
+                loadDisplay: false
+            });
         }
 
     }
@@ -41,20 +66,20 @@ class LogIn extends Component {
                         Iniciar Sesion
                     </h1>
 
-                    <form noValidate name="FormLogIn" id="FormLogIn" onSubmit={this.onSubmit} className="text-left mt-3" >
+                    <form  name="FormLogIn" id="FormLogIn" onSubmit={this.onSubmit} className="text-left mt-3" >
                         <div className="mb-3">
-                            <label htmlFor ="User" className="form-label">
+                            <label htmlFor="User" className="form-label">
                                 Usuario
                             </label>
-                            <input type="text" className="form-control" name="User" id="User" required  />
+                            <input type="text" className="form-control" minLength="3" maxLength="255" name="User" id="User" required  />
                         </div>
                         <div className="mb-3">
-                            <label htmlFor ="password" className="form-label">
+                            <label htmlFor="password" className="form-label">
                                 Clave
                             </label>
-                            <input type="password" autoComplete="off" className="form-control" required id="password" name="password" />
+                            <input type="password" minLength="8" maxLength="15" autoComplete="off" className="form-control" required id="password" name="password"   />
                         </div>
-                        <button type="submit" className="btn btn-primary w-100">
+                        <button type="submit" disabled={this.state.loadDisplay} className="btn btn-primary w-100">
                             Enviar
                         </button>
                     </form>
