@@ -1,6 +1,5 @@
 import './App.css';  
 import { useState } from 'react';
-import axios from 'axios';
 import {NotificationContainer} from 'react-notifications';
 
 import {
@@ -24,17 +23,15 @@ import LogIn from './views/LogIn';
 import Register from './views/Register';
 import DashBoard from './views/DashBoard';
 
-axios.defaults.baseURL = 'http://127.0.0.1:8000/api/';
-axios.defaults.headers.common['Authorization'] = 'bearer '+sessionStorage.getItem('user_token');
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-
-
-
 function App() {
 
   const [isOpen, setIsOpen] = useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
+
+
+  // status.setLogIn(false);
+  let AppStatus = window.['AppStatus'].getLogIn();
   
   return (
     <div className="App">
@@ -50,37 +47,48 @@ function App() {
             
             <Collapse isOpen={isOpen} navbar>
               <Nav className="mr-auto" navbar>
-                <NavItem>
-                  <Link to="/login" className="nav-link" >
-                    LogIn
-                  </Link>
-                </NavItem>
-                <NavItem>
-                  <Link to="/register" className="nav-link" >
-                    Register
-                  </Link>
-                </NavItem>
-                <NavItem>
-                  <Link to="/dashboard" className="nav-link" >
-                    DashBoard
-                  </Link>
-                </NavItem>
+                
+                {
+                  !AppStatus ? (<NavItem>
+                    <Link to="/login" className="nav-link" >
+                      LogIn
+                    </Link>
+                  </NavItem>):''
+                }
+
+                {
+                  !AppStatus ? (<NavItem>
+                    <Link to="/register" className="nav-link" >
+                      Register
+                    </Link>
+                  </NavItem>):''
+                }
+                
+                {
+                  AppStatus ? (<NavItem>
+                    <Link to="/dashboard" className="nav-link" >
+                      DashBoard
+                    </Link>
+                  </NavItem>):''
+                }
+                
               </Nav>
             </Collapse>
           </Navbar>
 
 
             <Switch >
-              <Redirect exact from='/' to='/login'/>
-              <Route path="/login">
-                <LogIn />
+              <Redirect exact from='/' to={'/'+(!AppStatus ? 'login':'dashboard')} />
+              <Route path="/login" component={LogIn} >
+                {AppStatus ? <Redirect to='/dashboard' />:''}
               </Route>
-              <Route path="/register">
-                <Register />
+              <Route path="/register" component={Register} >
+                {AppStatus ? <Redirect to='/dashboard' />:''}
+
               </Route>
-              <Route path="/dashboard" component={DashBoard} render={() => {
-                    return 1 === 2 ? <Redirect to='/login' />:'';
-                  }} >
+              <Route path="/dashboard" component={DashBoard} >
+                {!AppStatus ? <Redirect to='/login' />:''}
+
               </Route>
               <Redirect to={{
                   state: { error: true }

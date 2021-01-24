@@ -11,8 +11,8 @@ class Solicitante extends Component {
         this.state = {
             selectedId: 1,
             prestadores: [],
-            citas: []
-        }
+            citas: [],
+        };
 
         this.getPrestadores = this.getPrestadores.bind(this);
         this.getCitas       = this.getCitas.bind(this);
@@ -24,6 +24,13 @@ class Solicitante extends Component {
         this.getPrestadores();
         this.getCitas();
         this.saveRol();
+    }
+
+    componentWillUnmount() {
+        // fix Warning: Can't perform a React state update on an unmounted component
+        this.setState = (state,callback)=>{
+            return;
+        };
     }
 
     getCitas(){
@@ -141,7 +148,7 @@ class Solicitante extends Component {
 
     render() {
         return (
-            <div className="mt-3" >
+            <div className="mt-3 animate__animated animate__fadeIn" >
                 <aside className="w-50 p-2" >
                     <form name="FormSuscriberse" id="FormSuscriberse" onSubmit={this.suscribir} className="text-left mt-3" >
                         <label htmlFor="selectPrestadores">

@@ -7,19 +7,24 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
-    NavLink 
+    NavLink,
+    Redirect
   } from "react-router-dom";
 
 
 class DashBoard extends Component {
 
 
+    
     constructor(props){
         super(props)
-        
+        this.state = {
+            AppStatus: window.['AppStatus'].getLogIn()
+        };
     }
     
     render() {
+        console.log('hola: ', this.state.AppStatus)
         return (
             <div className="row justify-content-center animate__animated animate__fadeIn" >
                 <Router>
@@ -47,7 +52,7 @@ class DashBoard extends Component {
                             <Route exact  path="/dashboard/solicitante"  >
                                 <Solicitante />
                             </Route>
-                            <Route exact  path="/dashboard/prestador"  >
+                            <Route exact  path="/dashboard/prestador" >
                                 <Prestador />
                             </Route>
 

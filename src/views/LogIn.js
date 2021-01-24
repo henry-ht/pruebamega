@@ -37,6 +37,9 @@ class LogIn extends Component {
                     NotificationManager.success(res.data.message);
                     sessionStorage.setItem('user_token', res.data.access_token);
                     sessionStorage.setItem('user_data', JSON.stringify(res.data));
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
                 }else{
                     NotificationManager.error(res.data.message);
                 }

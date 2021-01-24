@@ -19,6 +19,13 @@ class Prestador extends Component {
         this.getCitas();
         this.saveRol();
     }
+    
+    componentWillUnmount() {
+        // fix Warning: Can't perform a React state update on an unmounted component
+        this.setState = (state,callback)=>{
+            return;
+        };
+    }
 
     crearCita(e){
         e.preventDefault();
@@ -93,7 +100,7 @@ class Prestador extends Component {
 
     render() {
         return (
-            <div className="mt-3" >
+            <div className="mt-3 animate__animated animate__fadeIn" >
                 <aside className="w-50">
                     <form  name="FormLogIn" id="FormLogIn" onSubmit={this.crearCita} className="text-left mt-3" >
                             <div className="mb-3">
