@@ -32,6 +32,14 @@ function App() {
 
   // status.setLogIn(false);
   let AppStatus = window.['AppStatus'].getLogIn();
+
+  function logOut(e){
+    e.preventDefault();
+
+    sessionStorage.removeItem('user_token');
+    sessionStorage.removeItem('user_data');
+    window.location.reload(false);
+  }
   
   return (
     <div className="App">
@@ -71,6 +79,13 @@ function App() {
                     </Link>
                   </NavItem>):''
                 }
+                {
+                  AppStatus ? (<NavItem>
+                    <p className="nav-link style-click mb-0"  onClick={logOut} >
+                      logOut
+                    </p>
+                  </NavItem>):''
+                }
                 
               </Nav>
             </Collapse>
@@ -86,7 +101,7 @@ function App() {
                 {AppStatus ? <Redirect to='/dashboard' />:''}
 
               </Route>
-              <Route path="/dashboard" component={DashBoard} >
+              <Route exact path="/dashboard" component={DashBoard} >
                 {!AppStatus ? <Redirect to='/login' />:''}
 
               </Route>
